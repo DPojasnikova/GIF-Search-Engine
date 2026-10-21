@@ -8,13 +8,10 @@ import 'package:gif_search_engine/giphy_api.dart';
 import 'package:gif_search_engine/screens/detail_screen.dart';
 import 'package:gif_search_engine/screens/search_screen.dart';
 
-// A fake api: it does not use the internet, it only remembers the calls
-// and returns the gifs that the test prepared.
 class FakeGiphyApi extends GiphyApi {
-  final List<String> queries = []; // every query that was requested
-  final List<int> offsets = []; // every offset that was requested
+  final List<String> queries = [];
+  final List<int> offsets = [];
 
-  // What to return. A test can replace it.
   Future<List<Gif>> Function(String query, int offset)? handler;
 
   @override
@@ -28,7 +25,6 @@ class FakeGiphyApi extends GiphyApi {
   }
 }
 
-// Makes a list of fake gifs
 List<Gif> makeGifs(int count, int start) {
   return List.generate(count, (i) {
     final number = start + i;
@@ -46,10 +42,9 @@ List<Gif> makeGifs(int count, int start) {
 
 Future<void> openScreen(WidgetTester tester, FakeGiphyApi api) async {
   await tester.pumpWidget(MaterialApp(home: SearchScreen(api: api)));
-  await tester.pump(); // let the first request finish
+  await tester.pump();
 }
 
-// Counts the columns of the grid
 int columnCount(WidgetTester tester) {
   final grid = tester.widget<GridView>(find.byType(GridView));
   final delegate =
@@ -78,7 +73,6 @@ void main() {
       await tester.enterText(find.byType(TextField), 'cat');
       await tester.pump(const Duration(milliseconds: searchDelayMs - 200));
 
-      // Only the first (trending) request was made so far
       expect(api.queries, ['']);
     });
 
@@ -129,14 +123,12 @@ void main() {
       final api = FakeGiphyApi();
       await openScreen(tester, api);
 
-      // From now on the next page never finishes
       final completer = Completer<List<Gif>>();
       api.handler = (query, offset) => completer.future;
 
       await tester.drag(find.byType(GridView), const Offset(0, -5000));
       await tester.pump();
 
-      // The spinner cell is at the bottom of the grid
       await tester.drag(find.byType(GridView), const Offset(0, -5000));
       await tester.pump();
       expect(find.byType(CircularProgressIndicator), findsWidgets);
@@ -153,14 +145,12 @@ void main() {
       await tester.drag(find.byType(GridView), const Offset(0, -5000));
       await tester.pump();
 
-      // The second request starts after the first page (offset = 24)
       expect(api.offsets, [0, pageSize]);
     });
 
     testWidgets('stops loading when the server has no more gifs',
         (tester) async {
       final api = FakeGiphyApi();
-      // The first page is shorter than pageSize, so it is the last one
       api.handler = (query, offset) async => makeGifs(5, 0);
       await openScreen(tester, api);
 
@@ -191,7 +181,6 @@ void main() {
       };
       await openScreen(tester, api);
 
-      // The internet is back
       api.handler = null;
       await tester.tap(find.text('Retry'));
       await tester.pump();
@@ -247,10 +236,7 @@ void main() {
   });
 
   group('Floating search field', () {
-    // Reads how visible the search field is (1 = visible, 0 = hidden)
     double searchOpacity(WidgetTester tester) {
-      // The search field is the first AnimatedOpacity in the widget tree
-      // (the SearchBar itself may have its own animated widgets inside)
       return tester
           .widget<AnimatedOpacity>(find.byType(AnimatedOpacity).first)
           .opacity;

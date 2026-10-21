@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../gif_model.dart';
 
-// Screen 2: detailed information about one gif
 class DetailScreen extends StatelessWidget {
   final Gif gif;
 
@@ -16,7 +15,6 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(title, overflow: TextOverflow.ellipsis)),
       body: SafeArea(
-        // Portrait: image on top. Landscape: image on the left.
         child: OrientationBuilder(
           builder: (context, orientation) {
             final image = buildImage();

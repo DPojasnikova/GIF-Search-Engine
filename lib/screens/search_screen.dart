@@ -8,9 +8,7 @@ import '../gif_model.dart';
 import '../giphy_api.dart';
 import 'detail_screen.dart';
 
-// Screen 1: search field and a grid of gifs
 class SearchScreen extends StatefulWidget {
-  // The api can be passed in from outside (tests use a fake one)
   final GiphyApi? api;
 
   const SearchScreen({super.key, this.api});
@@ -24,22 +22,22 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
   final ScrollController scrollController = ScrollController();
 
-  Timer? searchTimer; // timer for the delay before searching
+  Timer? searchTimer;
 
   List<Gif> gifs = [];
-  String query = ''; // current search query
-  bool isLoading = false; // the first page is loading
-  bool isLoadingMore = false; // the next page is loading
-  bool hasMore = true; // are there more gifs on the server
-  String? errorText; // error of the first load
-  String? loadMoreError; // error of loading the next page
-  bool showSearchBar = true; // the floating search field is visible
+  String query = '';
+  bool isLoading = false;
+  bool isLoadingMore = false;
+  bool hasMore = true;
+  String? errorText;
+  String? loadMoreError;
+  bool showSearchBar = true;
 
   @override
   void initState() {
     super.initState();
     scrollController.addListener(onScroll);
-    loadFirstPage(); // show trending gifs right away
+    loadFirstPage();
   }
 
   @override
@@ -50,7 +48,6 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  // The user typed something: wait for a pause and only then search
   void onSearchChanged(String text) {
     searchTimer?.cancel();
     searchTimer = Timer(const Duration(milliseconds: searchDelayMs), () {
@@ -62,7 +59,6 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  // Loads the first page again (new search or the "Retry" button)
   Future<void> loadFirstPage() async {
     final requestQuery = query;
     setState(() {
@@ -77,8 +73,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
     try {
       final result = await api.loadGifs(requestQuery, 0);
-      // While the request was running the user could type another text,
-      // then this result is outdated and we ignore it
       if (!mounted || requestQuery != query) return;
       setState(() {
         gifs = result;
@@ -94,7 +88,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  // Loads the next page
   Future<void> loadMore() async {
     if (isLoading || isLoadingMore || !hasMore) return;
 
@@ -121,13 +114,9 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  // Called on every scroll. Hides or shows the search field and
-  // loads more gifs when the user is close to the bottom.
   void onScroll() {
     final position = scrollController.position;
 
-    // Scrolling down hides the search field, scrolling up shows it.
-    // At the very top it is always visible.
     bool shouldShow = showSearchBar;
     if (position.pixels <= 0) {
       shouldShow = true;
@@ -157,7 +146,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // The grid fills the whole screen and the search field floats over it
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -175,7 +163,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // The search field. It slides up and fades out when it is hidden.
   Widget buildFloatingSearchBar() {
     return AnimatedSlide(
       duration: const Duration(milliseconds: 200),
@@ -206,12 +193,10 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget buildBody() {
-    // 1. First load: a spinner in the center
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // 2. Error of the first load
     if (errorText != null) {
       return Center(
         child: Padding(
@@ -233,27 +218,21 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    // 3. Nothing found
     if (gifs.isEmpty) {
       return const Center(child: Text('Nothing found'));
     }
 
-    // 4. The grid. The number of columns depends on the screen width,
-    // so in landscape mode there are more columns.
     final width = MediaQuery.of(context).size.width;
     final columns = (width / 180).floor().clamp(2, 8);
 
     return GridView.builder(
       controller: scrollController,
-      // The top padding leaves room for the floating search field,
-      // so it does not cover the first row
       padding: const EdgeInsets.fromLTRB(8, 72, 8, 8),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: columns,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),
-      // +1 is an extra cell at the bottom for a spinner or an error
       itemCount:
           gifs.length + ((isLoadingMore || loadMoreError != null) ? 1 : 0),
       itemBuilder: (context, index) {
@@ -273,7 +252,6 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Image.network(
           gif.previewUrl,
           fit: BoxFit.cover,
-          // While the image is loading, show a spinner
           loadingBuilder: (context, child, progress) {
             if (progress == null) return child;
             return Container(
@@ -281,7 +259,6 @@ class _SearchScreenState extends State<SearchScreen> {
               child: const Center(child: CircularProgressIndicator()),
             );
           },
-          // If the image failed to load, show an error icon
           errorBuilder: (context, error, stack) {
             return Container(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,

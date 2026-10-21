@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      // The phone's theme (light/dark) is picked up automatically
       themeMode: ThemeMode.system,
       home: const SearchScreen(),
     );

@@ -7,7 +7,6 @@ import 'package:gif_search_engine/giphy_api.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-// An example Giphy response with one gif
 const String fakeGifJson = '''
 {
   "id": "abc123",

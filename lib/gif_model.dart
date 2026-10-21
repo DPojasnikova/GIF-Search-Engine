@@ -1,12 +1,11 @@
-// One gif. Stores only what the screens need.
 class Gif {
   final String id;
   final String title;
-  final String previewUrl; // small image for the grid
-  final String originalUrl; // big image for the detail screen
+  final String previewUrl;
+  final String originalUrl;
   final String username;
   final String rating;
-  final String pageUrl; // link to the gif on the Giphy website
+  final String pageUrl;
 
   Gif({
     required this.id,
@@ -18,7 +17,6 @@ class Gif {
     required this.pageUrl,
   });
 
-  // Creates a gif from the JSON that came from Giphy
   factory Gif.fromJson(Map<String, dynamic> json) {
     final images = json['images'] as Map<String, dynamic>;
     final preview = images['fixed_width'] as Map<String, dynamic>;

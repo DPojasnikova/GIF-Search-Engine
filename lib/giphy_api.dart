@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'config.dart';
 import 'gif_model.dart';
 
-// An error with a readable message that can be shown to the user
 class GiphyException implements Exception {
   final String message;
   GiphyException(this.message);
@@ -16,12 +15,10 @@ class GiphyException implements Exception {
 }
 
 class GiphyApi {
-  // The client can be replaced in tests
   final http.Client client;
 
   GiphyApi({http.Client? client}) : client = client ?? http.Client();
 
-  // If the query is empty we load trending gifs, otherwise we search
   Future<List<Gif>> loadGifs(String query, int offset) async {
     final String path = query.isEmpty ? '/v1/gifs/trending' : '/v1/gifs/search';
 

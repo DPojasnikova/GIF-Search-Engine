@@ -94,10 +94,3 @@ The same file can also be installed from a computer with `adb install build/gif_
 
 To build the APK again after changing the code, run `flutter build apk --release`.
 Flutter puts the result in `build/app/outputs/flutter-apk/app-release.apk`.
-
-Note: the APK is signed with the debug key, so it is good for testing but not for publishing to Google Play.
-There is no iOS build file, because building for iOS requires a Mac.
-
-## What is not done
-
-The bonus items (state management, Coordinator, separate network availability check) were intentionally skipped: the project is written as simply as possible with `StatefulWidget`. Network problems are handled through request errors. The app was tested on an Android emulator. It was not run on iOS because a Mac is required.

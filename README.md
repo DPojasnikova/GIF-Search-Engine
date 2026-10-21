@@ -20,7 +20,7 @@
 - Loading indicators;
 - Error display;
 
-### Bonus points:
+### Bonus points (not needed at the first stage):
 - Using state management approaches or libraries such as BLoC (flutter_bloc), Riverpod or others;
 - Using an understandable architecture pattern;
 - Page navigation is separate from page widget code (a Coordinator pattern or similar);
@@ -32,6 +32,3 @@
 - UI up to interpretation - only things mentioned in requirements are mandatory;
 - Flutter version MUST be noted in repository ReadMe file;
 - If you were not able to complete some of the requirements, please note down what you tried and what was the result;
-
-### Contact
-- Please reply either directly to the e-mail that was sent to you or to studio@chililabs.io. The task must be attached as a link to a repository with public access. If you haven’t done so previously, please also attach your CV.
